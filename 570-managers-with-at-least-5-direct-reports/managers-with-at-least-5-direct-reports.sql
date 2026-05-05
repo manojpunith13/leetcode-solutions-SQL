@@ -1,15 +1,11 @@
 /* Write your T-SQL query statement below */
-WITH CTE1 AS (
-    SELECT E1.ID, 
-    e1.name,
-    COUNT(E1.ID) CNT
-FROM Employee E1 WITH(NOLOCK)
-JOIN Employee E2 WITH(NOLOCK)
-ON E1.id = E2.managerId 
-GROUP BY E1.ID,e1.name
-)
 
-SELECT CTE1.name
-FROM CTE1
-WHERE cnt>=5
- 
+WITH CTE1 AS (SELECT managerId,
+COUNT(managerID) as tot
+FROM Employee E1
+GROUP BY managerId
+HAVING COUNT(managerID)>=5)
+
+SELECT Name FROM Employee E1 
+WHERE EXISTS (SELECT 1 FROM CTE1  C1 
+                WHERE E1.id = C1.managerId )
